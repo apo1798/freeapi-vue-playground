@@ -1,8 +1,16 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import AutoComplete from 'primevue/autocomplete'
+</script>
 
 <template>
-  <main>
-    <div>Hello Vue!</div>
-    <h1 class="text-3xl font-bold underline">Hello world!</h1>
+  <main class="gap-2">
+    <!-- <Button size="small">Submit</Button>
+    <Button size="small" label="Submit" />
+    <Button>Submitt</Button>
+    <Button label="Submit" />
+    <Button size="large">111</Button>
+    <Button icon="pi pi-home" aria-label="Save" />
+    <button>11</button>
+    <AutoComplete /> -->
   </main>
 </template>
