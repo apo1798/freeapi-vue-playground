@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import clsx from 'clsx'
 import type { MenuItem } from 'primevue/menuitem'
 import { ref, type Ref } from 'vue'
 
@@ -12,106 +13,155 @@ const toggleDarkMode = () => {
 }
 
 const savedTheme = localStorage.getItem('theme')
-if (savedTheme === 'dark') {
+if (
+  savedTheme === 'dark' ||
+  (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)
+) {
   isDark.value = true
   document.documentElement.classList.add('dark')
 }
 
 const items: Ref<MenuItem[]> = ref([
   {
-    label: 'Home',
-    icon: 'pi pi-home'
+    label: '最新消息',
+    icon: 'pi pi-info-circle'
   },
   {
-    label: 'Features',
+    label: '熱門商品',
     icon: 'pi pi-star'
   },
   {
-    label: 'Projects',
-    icon: 'pi pi-search',
-    items: [
-      {
-        label: 'Core',
-        icon: 'pi pi-bolt',
-        shortcut: '⌘+S'
-      },
-      {
-        label: 'Blocks',
-        icon: 'pi pi-server',
-        shortcut: '⌘+B'
-      },
-      {
-        label: 'UI Kit',
-        icon: 'pi pi-pencil',
-        shortcut: '⌘+U'
-      },
-      {
-        separator: true
-      },
-      {
-        label: 'Templates',
-        icon: 'pi pi-palette',
-        items: [
-          {
-            label: 'Apollo',
-            icon: 'pi pi-palette',
-            badge: 2
-          },
-          {
-            label: 'Ultima',
-            icon: 'pi pi-palette',
-            badge: 3
-          }
-        ]
-      }
-    ]
+    label: 'PC 專區',
+    icon: 'pi pi-desktop'
+  },
+  {
+    label: '周邊專區'
   }
 ])
+
+// const navItems = [{ title: '關於我們', description: <div></div> }]
 </script>
 
 <template>
-  <Menubar class="flex gap-5" :model="items">
-    <template #start>
-      <RouterLink to="/" class="flex items-center gap-2 font-medium text-2xl">
-        <i class="pi pi-desktop text-3xl text-orange-400 font-bold"></i>
-        電腦先生屋
-      </RouterLink>
-    </template>
-    <template #item="{ item, props, hasSubmenu, root }">
-      <a v-ripple class="flex items-center" v-bind="props.action">
-        <span :class="item.icon" />
-        <span class="ml-2">{{ item.label }}</span>
-        <Badge v-if="item.badge" :class="{ 'ml-auto': !root, 'ml-2': root }" :value="item.badge" />
-        <span
-          v-if="item.shortcut"
-          class="ml-auto border border-surface rounded bg-emphasis text-muted-color text-xs p-1"
-          >{{ item.shortcut }}</span
-        >
-        <i
-          v-if="hasSubmenu"
-          :class="[
-            'pi pi-angle-down',
-            { 'pi-angle-down ml-2': root, 'pi-angle-right ml-auto': !root }
-          ]"
-        ></i>
-      </a>
-    </template>
-    <template #end>
-      <div class="flex items-center gap-2">
-        <div>
+  <div class="min-h-screen flex flex-col">
+    <Menubar class="flex gap-5" :model="items">
+      <template #start>
+        <RouterLink to="/" class="flex items-center gap-2 font-medium text-2xl">
+          <img src="/logo1.webp" class="w-16 h-1w-16 rounded" />
+        </RouterLink>
+      </template>
+      <template #buttonicon>
+        <span class="pi pi-bars text-xl font-bold"></span>
+      </template>
+      <template #item="{ item, props, hasSubmenu, root }">
+        <a v-ripple class="flex items-center" v-bind="props.action">
+          <span v-if="item.icon" :class="item.icon" class="text-xl" />
+          <span
+            :class="
+              clsx({
+                'text-2xl': item.icon
+              })
+            "
+            class="text-xl"
+            >{{ item.label }}</span
+          >
+          <Badge
+            v-if="item.badge"
+            :class="{ 'ml-auto': !root, 'ml-2': root }"
+            :value="item.badge"
+          />
+          <span
+            v-if="item.shortcut"
+            class="ml-auto border border-surface rounded bg-emphasis text-muted-color text-xs p-1"
+            >{{ item.shortcut }}</span
+          >
+          <i
+            v-if="hasSubmenu"
+            :class="[
+              'pi pi-angle-down',
+              { 'pi-angle-down ml-2': root, 'pi-angle-right ml-auto': !root }
+            ]"
+          ></i>
+        </a>
+      </template>
+      <template #end>
+        <div class="flex items-center gap-2">
+          <InputText placeholder="Search" type="text" class="w-32 sm:w-auto" />
           <Button
-            :icon="isDark ? 'pi pi-sun' : 'pi pi-moon'"
             @click="toggleDarkMode"
-            size="small"
             aria-label="Toggle Theme"
             link
-            class="hover:bg-zinc-100 dark:hover:bg-zinc-700"
+            class="hover:bg-zinc-100 dark:hover:bg-zinc-700 font-semibold"
+          >
+            <span :class="clsx(isDark ? 'pi pi-sun' : 'pi pi-moon', 'text-lg')" />
+          </Button>
+          <Button
+            as="RouterLink"
+            link
+            icon="pi pi-user"
+            to="/user"
+            class="hover:bg-zinc-100 dark:hover:bg-zinc-700 font-semibold"
+          />
+          <Button
+            as="RouterLink"
+            link
+            icon="pi pi-shopping-cart"
+            to="/user"
+            class="hover:bg-zinc-100 dark:hover:bg-zinc-700 font-semibold"
           />
         </div>
-        <InputText placeholder="Search" type="text" class="w-32 sm:w-auto" />
-        <Avatar image="/amyelsner.png" shape="circle" />
+      </template>
+    </Menubar>
+    <main class="grow">
+      <slot />
+    </main>
+    <footer class="bg-slate-700 py-5 text-white">
+      <div class="max-w-7xl mx-auto">
+        <ul class="flex gap-3 text-center mb-5 border-b pb-10 border-gray-400">
+          <li class="basis-1/3">
+            <h5 class="text-xl font-bold mb-2">關於我們</h5>
+            <p>
+              Fat4Fun 是一家致力於提供高性能電競設備的公司
+              <br />
+              專注於滿足玩家的需求。
+            </p>
+          </li>
+          <li class="basis-1/3">
+            <h5 class="text-xl font-bold mb-2">聯絡我們</h5>
+            <ul>
+              <li>Email: support@fat4fun.com</li>
+              <li>電話: +886 1234-5678</li>
+            </ul>
+          </li>
+          <li class="basis-1/3">
+            <h5 class="text-xl font-bold mb-2">關注我們</h5>
+            <div class="flex gap-6 justify-center">
+              <a
+                href="https://www.facebook.com/profile.php?id=100009114848126"
+                rel="noopner noreferrer"
+                target="_blank"
+              >
+                <span class="pi pi-facebook text-3xl" />
+              </a>
+              <a
+                href="https://www.instagram.com/liaohongming/"
+                rel="noopner noreferrer"
+                target="_blank"
+              >
+                <span class="pi pi-instagram text-3xl" />
+              </a>
+            </div>
+          </li>
+        </ul>
+        <div class="flex justify-center gap-2">
+          <div class="text-gray-300">Fat4Fun © 2024. All rights reserved.</div>
+          <div class="flex gap-2">
+            <a href="">隱私政策</a>
+            |
+            <a href="">服務條款</a>
+          </div>
+        </div>
       </div>
-    </template>
-  </Menubar>
-  <slot />
+    </footer>
+  </div>
 </template>
