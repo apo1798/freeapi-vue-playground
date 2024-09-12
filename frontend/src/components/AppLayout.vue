@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup lang="tsx">
 import clsx from 'clsx'
 import type { MenuItem } from 'primevue/menuitem'
 import { ref, type Ref } from 'vue'
@@ -39,12 +39,52 @@ const items: Ref<MenuItem[]> = ref([
   }
 ])
 
-// const navItems = [{ title: '關於我們', description: <div></div> }]
+const footerItems = [
+  {
+    title: '關於我們',
+    content: (
+      <p>
+        Fat4Fun 是一家致力於提供高性能電競設備的公司
+        <br />
+        專注於滿足玩家的需求。
+      </p>
+    )
+  },
+  {
+    title: '聯絡我們',
+    content: (
+      <ul>
+        <li>Email: support@fat4fun.com</li>
+        <li>電話: +886 1234-5678</li>
+      </ul>
+    )
+  },
+  {
+    title: '關注我們',
+    content: (
+      <div class="flex gap-6 justify-center">
+        <a
+          href="https://www.facebook.com/profile.php?id=100009114848126"
+          rel="noopner noreferrer"
+          target="_blank"
+        >
+          <span class="pi pi-facebook text-3xl" />
+        </a>
+        <a href="https://www.instagram.com/liaohongming/" rel="noopner noreferrer" target="_blank">
+          <span class="pi pi-instagram text-3xl" />
+        </a>
+      </div>
+    )
+  }
+]
 </script>
 
 <template>
   <div class="min-h-screen flex flex-col">
-    <Menubar class="flex gap-5" :model="items">
+    <Menubar
+      class="flex gap-5 sticky bg-white/90 backdrop-blur-[3px] rounded-none dark:bg-black/90"
+      :model="items"
+    >
       <template #start>
         <RouterLink to="/" class="flex items-center gap-2 font-medium text-2xl">
           <img src="/logo1.webp" class="w-16 h-1w-16 rounded" />
@@ -118,39 +158,11 @@ const items: Ref<MenuItem[]> = ref([
     <footer class="bg-slate-700 py-5 text-white">
       <div class="max-w-7xl mx-auto">
         <ul class="flex gap-3 text-center mb-5 border-b pb-10 border-gray-400">
-          <li class="basis-1/3">
-            <h5 class="text-xl font-bold mb-2">關於我們</h5>
-            <p>
-              Fat4Fun 是一家致力於提供高性能電競設備的公司
-              <br />
-              專注於滿足玩家的需求。
-            </p>
-          </li>
-          <li class="basis-1/3">
-            <h5 class="text-xl font-bold mb-2">聯絡我們</h5>
-            <ul>
-              <li>Email: support@fat4fun.com</li>
-              <li>電話: +886 1234-5678</li>
-            </ul>
-          </li>
-          <li class="basis-1/3">
-            <h5 class="text-xl font-bold mb-2">關注我們</h5>
-            <div class="flex gap-6 justify-center">
-              <a
-                href="https://www.facebook.com/profile.php?id=100009114848126"
-                rel="noopner noreferrer"
-                target="_blank"
-              >
-                <span class="pi pi-facebook text-3xl" />
-              </a>
-              <a
-                href="https://www.instagram.com/liaohongming/"
-                rel="noopner noreferrer"
-                target="_blank"
-              >
-                <span class="pi pi-instagram text-3xl" />
-              </a>
-            </div>
+          <li v-for="item in footerItems" :key="item.title" class="basis-1/3">
+            <h5 class="text-xl font-bold mb-2">
+              {{ item.title }}
+            </h5>
+            <component :is="item.content" />
           </li>
         </ul>
         <div class="flex justify-center gap-2">
