@@ -1,5 +1,5 @@
-<script setup>
-import { ref, onMounted } from 'vue'
+<script setup lang="ts">
+import { ref } from 'vue'
 
 const products = ref([
   {
@@ -44,54 +44,88 @@ const responsiveOptions = ref([
     numScroll: 1
   }
 ])
+
+const accessories = [
+  { title: '硬碟', image: 'image/a1.webp' },
+  { title: '滑鼠', image: 'image/a2.webp' },
+  { title: '鍵盤', image: 'image/a3.webp' },
+  { title: '耳機', image: 'image/a4.webp' },
+  { title: '方向盤', image: 'image/a5.webp' },
+  { title: '記憶體', image: 'image/a6.webp' },
+  { title: '處理器', image: 'image/a7.webp' },
+  { title: '顯示卡', image: 'image/a8.webp' }
+]
 </script>
 
 <template>
-  <!-- <h2 class="text-5xl text-center mb-5">電競主機</h2> -->
-  <div class="relative">
-    <Carousel
-      class=""
-      :value="products"
-      :numVisible="1"
-      :numScroll="1"
-      :responsiveOptions="responsiveOptions"
-      circular
-      :autoplayInterval="6000"
-      :prevButtonProps="{
-        class: 'absolute z-10 left-4 rounded-full opacity-50 hover:opacity-100 transition-opacity'
-      }"
-      :nextButtonProps="{
-        class: 'absolute z-10 right-4 rounded-full opacity-50 hover:opacity-100 transition-opacity'
-      }"
-    >
-      <template #item="slotProps">
-        <div>
-          <div class="mb-4">
-            <div class="relative mx-auto">
-              <img
-                :src="slotProps.data.image"
-                :alt="slotProps.data.name"
-                class="max-h-[calc(100vh-72px)] object-cover w-full rounded"
-              />
+  <main class="mb-20 space-y-10">
+    <div class="relative">
+      <Carousel
+        class=""
+        :value="products"
+        :numVisible="1"
+        :numScroll="1"
+        :responsiveOptions="responsiveOptions"
+        circular
+        :autoplayInterval="6000"
+        :prevButtonProps="{
+          class: 'absolute z-10 left-4 rounded-full opacity-50 hover:opacity-100 transition-opacity'
+        }"
+        :nextButtonProps="{
+          class:
+            'absolute z-10 right-4 rounded-full opacity-50 hover:opacity-100 transition-opacity'
+        }"
+      >
+        <template #item="slotProps">
+          <div>
+            <div class="mb-4">
+              <div class="relative mx-auto">
+                <img
+                  :src="slotProps.data.image"
+                  :alt="slotProps.data.name"
+                  class="max-h-[calc(100vh-72px)] w-full rounded object-cover"
+                />
+              </div>
             </div>
           </div>
-        </div>
-      </template>
-    </Carousel>
-    <div
-      class="absolute top-1/2 right-1/2 sm:right-16 md:right-20 -translate-y-1/2 translate-x-1/2 sm:-translate-x-0 font-bold text-center sm:text-end w-full"
-    >
-      <h1
-        class="text-3xl sm:text-3xl lg:text-4xl xl:text-7xl text-white [text-shadow:0px_0px_3px_#000] leading-none"
+        </template>
+      </Carousel>
+      <div
+        class="absolute right-1/2 top-1/2 w-full -translate-y-1/2 translate-x-1/2 text-center font-bold sm:right-16 sm:-translate-x-0 sm:text-end md:right-20"
       >
-        歡迎來到 Fat4Fun
-      </h1>
-      <p
-        class="text-base sm:text-xl md:text-2xl xl:text-3xl text-white [text-shadow:0px_0px_3px_#000]"
-      >
-        探索我們的最新商品和優惠活動
-      </p>
-      <Button class="mt-2" size="large">立即購買</Button>
+        <h1
+          class="text-3xl leading-none text-white [text-shadow:0px_0px_3px_#000] sm:text-3xl lg:text-4xl xl:text-7xl"
+        >
+          歡迎來到 Fat4Fun
+        </h1>
+        <p
+          class="text-base text-white [text-shadow:0px_0px_3px_#000] sm:text-xl md:text-2xl xl:text-3xl"
+        >
+          探索我們的最新商品和優惠活動
+        </p>
+        <Button class="mt-2" size="large">立即購買</Button>
+      </div>
     </div>
-  </div>
+    <section class="space-y-8">
+      <h2 class="text-center text-5xl font-bold">電競周邊</h2>
+      <ul class="grid grid-cols-1 gap-2 sm:grid-cols-2 xl:grid-cols-4">
+        <li
+          v-for="item in accessories"
+          :key="item.title"
+          class="group relative overflow-hidden shadow shadow-white hover:shadow-lg"
+        >
+          <img
+            :src="item.image"
+            :alt="item.title"
+            class="aspect-video transition-all duration-500 ease-in-out group-hover:scale-[103%]"
+          />
+          <div
+            class="absolute left-0 top-0 z-10 hidden h-full w-full place-items-center bg-gray-900/50 text-center text-4xl font-bold text-white group-hover:grid md:text-3xl"
+          >
+            {{ item.title }}
+          </div>
+        </li>
+      </ul>
+    </section>
+  </main>
 </template>

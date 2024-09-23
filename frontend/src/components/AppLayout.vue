@@ -62,7 +62,7 @@ const footerItems = [
   {
     title: '關注我們',
     content: (
-      <div class="flex gap-6 justify-center">
+      <div class="flex justify-center gap-6">
         <a
           href="https://www.facebook.com/profile.php?id=100009114848126"
           rel="noopner noreferrer"
@@ -80,14 +80,14 @@ const footerItems = [
 </script>
 
 <template>
-  <div class="min-h-screen flex flex-col">
+  <div class="flex min-h-screen flex-col">
     <Menubar
-      class="flex gap-5 sticky bg-white/90 backdrop-blur-[3px] rounded-none dark:bg-black/90"
+      class="sticky flex gap-5 rounded-none bg-white/90 backdrop-blur-[3px] dark:bg-black/90"
       :model="items"
     >
       <template #start>
-        <RouterLink to="/" class="flex items-center gap-2 font-medium text-2xl">
-          <img src="/logo1.webp" class="w-16 h-1w-16 rounded" />
+        <RouterLink to="/" class="flex items-center gap-2 text-2xl font-medium">
+          <img src="/logo1.webp" class="h-1w-16 w-16 rounded" />
         </RouterLink>
       </template>
       <template #buttonicon>
@@ -112,7 +112,7 @@ const footerItems = [
           />
           <span
             v-if="item.shortcut"
-            class="ml-auto border border-surface rounded bg-emphasis text-muted-color text-xs p-1"
+            class="border-surface bg-emphasis text-muted-color ml-auto rounded border p-1 text-xs"
             >{{ item.shortcut }}</span
           >
           <i
@@ -131,7 +131,7 @@ const footerItems = [
             @click="toggleDarkMode"
             aria-label="Toggle Theme"
             link
-            class="hover:bg-zinc-100 dark:hover:bg-zinc-700 font-semibold"
+            class="font-semibold hover:bg-zinc-100 dark:hover:bg-zinc-700"
           >
             <span :class="clsx(isDark ? 'pi pi-sun' : 'pi pi-moon', 'text-lg')" />
           </Button>
@@ -140,14 +140,14 @@ const footerItems = [
             link
             icon="pi pi-user"
             to="/user"
-            class="hover:bg-zinc-100 dark:hover:bg-zinc-700 font-semibold"
+            class="font-semibold hover:bg-zinc-100 dark:hover:bg-zinc-700"
           />
           <Button
             as="RouterLink"
             link
             icon="pi pi-shopping-cart"
             to="/user"
-            class="hover:bg-zinc-100 dark:hover:bg-zinc-700 font-semibold"
+            class="font-semibold hover:bg-zinc-100 dark:hover:bg-zinc-700"
           />
         </div>
       </template>
@@ -156,10 +156,12 @@ const footerItems = [
       <slot />
     </main>
     <footer class="bg-slate-700 py-5 text-white">
-      <div class="max-w-7xl mx-auto">
-        <ul class="flex gap-3 text-center mb-5 border-b pb-10 border-gray-400">
-          <li v-for="item in footerItems" :key="item.title" class="basis-1/3">
-            <h5 class="text-xl font-bold mb-2">
+      <div class="mx-auto max-w-7xl px-6">
+        <ul
+          class="mb-5 gap-10 divide-y divide-white/50 border-b border-gray-400 pb-10 text-center md:flex md:grid-rows-3 md:divide-y-0"
+        >
+          <li v-for="item in footerItems" :key="item.title" class="basis-1/3 py-4">
+            <h5 class="mb-2 text-xl font-bold">
               {{ item.title }}
             </h5>
             <component :is="item.content" />

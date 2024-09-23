@@ -13,12 +13,17 @@ declare module 'vue' {
     Button: typeof import('primevue/button')['default']
     Carousel: typeof import('primevue/carousel')['default']
     Divider: typeof import('primevue/divider')['default']
+    FloatLabel: typeof import('primevue/floatlabel')['default']
+    FormInput: typeof import('./src/components/form/FormInput.vue')['default']
+    FormSelect: typeof import('./src/components/form/FormSelect.vue')['default']
     InputText: typeof import('primevue/inputtext')['default']
     Menu: typeof import('primevue/menu')['default']
     Menubar: typeof import('primevue/menubar')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    Select: typeof import('primevue/select')['default']
     Tag: typeof import('primevue/tag')['default']
+    Toast: typeof import('primevue/toast')['default']
   }
   export interface ComponentCustomProperties {
     Ripple: typeof import('primevue/ripple')['default']
