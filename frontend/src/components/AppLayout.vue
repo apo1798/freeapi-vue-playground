@@ -1,9 +1,11 @@
 <script setup lang="tsx">
+import { useUserStore } from '@/stores/user'
 import clsx from 'clsx'
 import type { MenuItem } from 'primevue/menuitem'
 import { ref, type Ref } from 'vue'
 
 const isDark = ref(false)
+const { user } = useUserStore()
 
 const toggleDarkMode = () => {
   isDark.value = !isDark.value
@@ -126,8 +128,9 @@ const footerItems = [
       </template>
       <template #end>
         <div class="flex items-center gap-2">
-          <InputText placeholder="Search" type="text" class="w-32 sm:w-auto" />
+          <InputText placeholder="快速搜尋" type="text" class="w-32 sm:w-auto" />
           <Button
+            v-tooltip.top="'切換主題'"
             @click="toggleDarkMode"
             aria-label="Toggle Theme"
             link
@@ -136,10 +139,11 @@ const footerItems = [
             <span :class="clsx(isDark ? 'pi pi-sun' : 'pi pi-moon', 'text-lg')" />
           </Button>
           <Button
+            v-tooltip.top="'使用者'"
             as="RouterLink"
             link
             icon="pi pi-user"
-            to="/user"
+            :to="user ? '/user' : '/user'"
             class="font-semibold hover:bg-zinc-100 dark:hover:bg-zinc-700"
           />
           <Button

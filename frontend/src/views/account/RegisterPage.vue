@@ -1,17 +1,17 @@
 <script setup lang="ts">
 import FormInput from '@/components/form/FormInput.vue'
 import FormSelect from '@/components/form/FormSelect.vue'
+import { useToastStore } from '@/stores/toast'
 import { customKy } from '@/utils/ky'
 import { customZod } from '@/utils/zod'
 import { useMutation } from '@tanstack/vue-query'
 import { toTypedSchema } from '@vee-validate/zod'
-import { useToast } from 'primevue/usetoast'
 import { useForm } from 'vee-validate'
 import { useRouter } from 'vue-router'
 import { z } from 'zod'
 
 const router = useRouter()
-const toast = useToast()
+const toast = useToastStore()
 
 const schema = customZod
   .object({
@@ -40,7 +40,7 @@ const { mutate } = useMutation({
   mutationKey: ['register'],
   mutationFn: async (value: Omit<z.infer<typeof schema>, 'passwordConfirm'>) => {
     const res = await customKy.post('users/register', { json: value }).json()
-    toast.add({ summary: '註冊成功' })
+    toast.message({ summary: '註冊成功' })
     router.push('/account/login')
     return res
   }
@@ -48,12 +48,6 @@ const { mutate } = useMutation({
 const onSubmit = handleSubmit((values) => {
   const { passwordConfirm: _, ...formValues } = values
   mutate(formValues)
-})
-
-fetch('asd', {
-  headers: {
-    'Content-Type': 'application/json'
-  }
 })
 </script>
 
@@ -93,16 +87,20 @@ fetch('asd', {
           v-model="role"
         />
       </div>
-      <div class="mt-12 space-y-6">
+      <div class="space-y-6">
         <Button type="submit" class="w-full" label="註冊帳號" />
-        <Button
-          type="button"
-          severity="info"
-          as="router-link"
-          :to="{ name: 'login' }"
-          class="w-full"
-          label="已有帳號？回登入頁面"
-        />
+        <div class="flex flex-col gap-4 border-t pt-6">
+          <h5 class="text-center text-xl font-bold">已有 Fat4Fun 帳號？</h5>
+
+          <Button
+            type="button"
+            severity="info"
+            as="router-link"
+            :to="{ name: 'login' }"
+            class="w-full"
+            label="回登入頁面"
+          />
+        </div>
       </div>
     </form>
   </section>

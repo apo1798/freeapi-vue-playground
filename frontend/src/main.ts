@@ -7,11 +7,12 @@ import { createApp } from 'vue'
 
 import { VueQueryPlugin } from '@tanstack/vue-query'
 import ToastService from 'primevue/toastservice'
+import Tooltip from 'primevue/tooltip'
 import App from './App.vue'
 import router from './router'
 import { Noir } from './style/theme'
 
-const app = createApp(App)
+export const app = createApp(App)
 
 app.use(createPinia())
 app.use(router)
@@ -26,5 +27,6 @@ app.use(PrimeVue, {
   }
 })
 app.use(ToastService)
+app.directive('tooltip', Tooltip)
 
 app.mount('#app')
