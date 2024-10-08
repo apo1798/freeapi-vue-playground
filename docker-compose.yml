@@ -22,5 +22,14 @@ services:
     ports:
       - 27017:27017
 
+  frontend:
+    build:
+      context: ./frontend
+    ports:
+      - 5010:5010
+    volumes:
+      - ./frontend:/usr/src/freeapi-frontend-vue
+      - /usr/src/freeapi-frontend-vue/node_modules
+
 volumes:
   data:

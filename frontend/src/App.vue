@@ -1,7 +1,14 @@
 <script setup lang="ts">
-import { RouterView } from 'vue-router'
+import { useToastStore } from '@/stores/toast'
+import { useUserStore } from './stores/user'
+
+useToastStore()
+useUserStore()
 </script>
 
 <template>
-  <RouterView />
+  <AppLayout>
+    <RouterView />
+    <Toast />
+  </AppLayout>
 </template>
