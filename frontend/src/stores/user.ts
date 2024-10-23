@@ -1,4 +1,4 @@
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import { defineStore } from 'pinia'
 import { customKy } from '@/utils/ky'
 import { z } from 'zod'
@@ -36,21 +36,35 @@ export const useUserStore = defineStore('user', () => {
 
     return res
   }
+
   const logout = async () => {
     localStorage.removeItem(isLoggedInKey)
     await customKy.post('user/logout')
+    isLoggedIn.value = false
   }
+
   const checkLoginStatus = async () => {
-    const res = await customKy.get('users/current-user').json()
-    const result = z.object({ data: userSchema }).safeParse(res)
-    if (result.data) {
-      user.value = result.data.data
+    try {
+      const res = await customKy.get('users/current-user').json()
+      const result = z.object({ data: userSchema }).safeParse(res)
+      if (result.success) {
+        user.value = result.data.data
+      }
+    } catch (e) {
+      localStorage.removeItem(isLoggedInKey)
     }
   }
 
-  if (isLoggedIn.value === undefined && isLoggedIn) {
-    checkLoginStatus()
-  }
+  onMounted(() => {
+    if (isLoggedIn.value) {
+      checkLoginStatus()
+    }
+  })
 
-  return { isLoggedIn, checkLoginStatus, logout, login, ...(user.value && { user }) }
+  return {
+    isLoggedIn,
+    user,
+    logout,
+    login
+  }
 })

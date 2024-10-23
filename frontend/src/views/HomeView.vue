@@ -1,7 +1,55 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { customKy } from '@/utils/ky'
+import { useQuery } from '@tanstack/vue-query'
+import { computed, ref } from 'vue'
+import { z } from 'zod'
 
-const products = ref([
+const productsSchema = z.object({
+  products: z.array(
+    z.object({
+      _id: z.string(),
+      category: z.string(),
+      description: z.string(),
+      mainImage: z.object({
+        url: z.string(),
+        localPath: z.string(),
+        _id: z.string()
+      }),
+      name: z.string(),
+      owner: z.string(),
+      price: z.number(),
+      stock: z.number(),
+      subImages: z.array(z.object({ url: z.string(), localPath: z.string(), _id: z.string() })),
+      __v: z.number(),
+      createdAt: z.string(),
+      updatedAt: z.string()
+    })
+  ),
+  totalProducts: z.number(),
+  limit: z.number(),
+  page: z.number(),
+  totalPages: z.number(),
+  serialNumberStartFrom: z.number(),
+  hasPrevPage: z.boolean(),
+  hasNextPage: z.boolean(),
+  prevPage: z.number().nullable(),
+  nextPage: z.number().nullable()
+})
+
+const pagination = ref({ page: 1, limit: 10 })
+const { data, isLoading, isError } = useQuery({
+  queryKey: computed(() => ['products', pagination.value.limit, pagination.value.page]),
+  queryFn: async () => {
+    const res = await customKy
+      .get('ecommerce/products', { searchParams: { ...pagination.value } })
+      .json()
+    const result = productsSchema.safeParse(res)
+    console.log(result.error)
+    return result.data
+  }
+})
+
+const carouselItems = ref([
   {
     id: '1000',
     image: '/image/ii1.webp'
@@ -44,17 +92,6 @@ const responsiveOptions = ref([
     numScroll: 1
   }
 ])
-
-const accessories = [
-  { title: '硬碟', image: 'image/a1.webp' },
-  { title: '滑鼠', image: 'image/a2.webp' },
-  { title: '鍵盤', image: 'image/a3.webp' },
-  { title: '耳機', image: 'image/a4.webp' },
-  { title: '方向盤', image: 'image/a5.webp' },
-  { title: '記憶體', image: 'image/a6.webp' },
-  { title: '處理器', image: 'image/a7.webp' },
-  { title: '顯示卡', image: 'image/a8.webp' }
-]
 </script>
 
 <template>
@@ -62,7 +99,7 @@ const accessories = [
     <div class="relative">
       <Carousel
         class=""
-        :value="products"
+        :value="carouselItems"
         :numVisible="1"
         :numScroll="1"
         :responsiveOptions="responsiveOptions"
@@ -108,12 +145,37 @@ const accessories = [
     </div>
     <section class="space-y-8">
       <h2 class="text-center text-5xl font-bold">電競周邊</h2>
-      <ul class="grid grid-cols-1 gap-2 sm:grid-cols-2 xl:grid-cols-4">
-        <li
-          v-for="item in accessories"
-          :key="item.title"
-          class="group relative overflow-hidden shadow shadow-white hover:shadow-lg"
-        >
+      <div v-if="isError">error</div>
+      <div v-else-if="isLoading">Loading</div>
+      <div v-else-if="data?.products">
+        <ul class="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
+          <li v-for="product in data.products" :key="product._id">
+            <div class="aspect-[3/2] overflow-hidden rounded">
+              <img :src="product.mainImage.url" class="aspect-[3/2] object-cover" />
+            </div>
+            <div>{{ product.name }}</div>
+          </li>
+        </ul>
+        <Paginator
+          :first="(pagination.page - 1) * pagination.limit"
+          :rows="pagination.limit"
+          :totalRecords="data.totalProducts"
+          :rowsPerPageOptions="[10, 20, 25]"
+          @update:rows="
+            (num) => {
+              pagination.limit = num
+            }
+          "
+          @update:first="
+            (first) => {
+              pagination.page = first / pagination.limit + 1
+            }
+          "
+        />
+      </div>
+
+      <!-- <ul class="grid grid-cols-1 gap-2 sm:grid-cols-2 xl:grid-cols-4">
+        <li v-for="item in accessories" :key="item.title" class="group relative overflow-hidden">
           <img
             :src="item.image"
             :alt="item.title"
@@ -125,7 +187,7 @@ const accessories = [
             {{ item.title }}
           </div>
         </li>
-      </ul>
+      </ul> -->
     </section>
   </main>
 </template>

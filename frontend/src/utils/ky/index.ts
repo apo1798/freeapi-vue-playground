@@ -21,6 +21,19 @@ export const customKy = ky.create({
 
         return error
       }
+    ],
+    afterResponse: [
+      async (_request, _options, response) => {
+        if (response.ok) {
+          const responseData = (await response.json()) as Record<string, any>
+
+          return new Response(JSON.stringify(responseData?.data), response)
+        }
+        return response
+      }
     ]
   }
 })
+
+// http://localhost:8080/api/v1/api/v1/ecommerce/products
+// http://localhost:8080/api/v1/ecommerce/products?page=1&limit=10

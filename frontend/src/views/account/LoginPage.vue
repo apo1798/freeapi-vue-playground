@@ -24,7 +24,7 @@ const { defineField, handleSubmit, errors } = useForm({
 const [username] = defineField('username')
 const [password] = defineField('password')
 
-const { mutate } = useMutation({
+const { mutate: login } = useMutation({
   mutationKey: ['register'],
   mutationFn: async (value: z.infer<typeof schema>) => {
     const res = await user.login(value)
@@ -33,9 +33,9 @@ const { mutate } = useMutation({
     return res
   }
 })
+
 const onSubmit = handleSubmit((values) => {
-  console.log(values)
-  mutate(values)
+  login(values)
 })
 </script>
 

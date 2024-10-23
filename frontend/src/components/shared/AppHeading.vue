@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import clsx from 'clsx'
 import { twMerge } from 'tailwind-merge'
-import { onMounted, useSlots } from 'vue'
+import { onMounted, useSlots, computed } from 'vue'
 
 const { level = 'h2', class: className } = defineProps<{
-  level: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6'
+  level?: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6'
   class?: string
 }>()
 
@@ -19,11 +19,11 @@ const baseClasses = {
 }
 
 // Determine the final class string
-const finalClass = twMerge(baseClasses[level], clsx(className))
+const finalClass = computed(() => twMerge(baseClasses[level], clsx(className)))
 
 onMounted(() => {
   if (!useSlots().default) {
-    throw new Error('The default slot is required but was not provided.')
+    console.error('The default slot is required but was not provided.')
   }
 })
 </script>

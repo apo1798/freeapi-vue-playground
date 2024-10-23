@@ -3,9 +3,11 @@ import { useUserStore } from '@/stores/user'
 import clsx from 'clsx'
 import type { MenuItem } from 'primevue/menuitem'
 import { ref, type Ref } from 'vue'
+import { storeToRefs } from 'pinia'
 
 const isDark = ref(false)
-const { user } = useUserStore()
+const userStore = useUserStore()
+const { isLoggedIn } = storeToRefs(userStore)
 
 const toggleDarkMode = () => {
   isDark.value = !isDark.value
@@ -139,11 +141,11 @@ const footerItems = [
             <span :class="clsx(isDark ? 'pi pi-sun' : 'pi pi-moon', 'text-lg')" />
           </Button>
           <Button
-            v-tooltip.top="'使用者'"
+            v-tooltip.top="isLoggedIn ? '使用者' : '登入'"
             as="RouterLink"
             link
             icon="pi pi-user"
-            :to="user ? '/user' : '/user'"
+            :to="isLoggedIn ? '/user' : '/account/login'"
             class="font-semibold hover:bg-zinc-100 dark:hover:bg-zinc-700"
           />
           <Button
