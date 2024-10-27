@@ -46,9 +46,9 @@ export const useUserStore = defineStore('user', () => {
   const checkLoginStatus = async () => {
     try {
       const res = await customKy.get('users/current-user').json()
-      const result = z.object({ data: userSchema }).safeParse(res)
+      const result = userSchema.safeParse(res)
       if (result.success) {
-        user.value = result.data.data
+        user.value = result.data
       }
     } catch (e) {
       localStorage.removeItem(isLoggedInKey)

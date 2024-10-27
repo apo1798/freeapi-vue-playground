@@ -86,7 +86,7 @@ const footerItems = [
 <template>
   <div class="flex min-h-screen flex-col">
     <Menubar
-      class="sticky flex gap-5 rounded-none bg-white/90 backdrop-blur-[3px] dark:bg-black/90"
+      class="sticky top-0 z-50 flex gap-5 rounded-none bg-white/90 backdrop-blur-[3px] dark:bg-black/90"
       :model="items"
     >
       <template #start>

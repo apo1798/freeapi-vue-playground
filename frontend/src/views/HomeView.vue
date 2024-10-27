@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { customKy } from '@/utils/ky'
-import { useQuery } from '@tanstack/vue-query'
-import { computed, ref } from 'vue'
+import { keepPreviousData, useQuery } from '@tanstack/vue-query'
+import { computed, effect, ref, watch, watchEffect } from 'vue'
 import { z } from 'zod'
+import { LoaderCircle } from 'lucide-vue-next'
 
 const productsSchema = z.object({
   products: z.array(
@@ -37,7 +38,7 @@ const productsSchema = z.object({
 })
 
 const pagination = ref({ page: 1, limit: 10 })
-const { data, isLoading, isError } = useQuery({
+const { data, isFetching, isPending, isError } = useQuery({
   queryKey: computed(() => ['products', pagination.value.limit, pagination.value.page]),
   queryFn: async () => {
     const res = await customKy
@@ -46,7 +47,8 @@ const { data, isLoading, isError } = useQuery({
     const result = productsSchema.safeParse(res)
     console.log(result.error)
     return result.data
-  }
+  },
+  placeholderData: keepPreviousData
 })
 
 const carouselItems = ref([
@@ -92,6 +94,9 @@ const responsiveOptions = ref([
     numScroll: 1
   }
 ])
+watchEffect(() => {
+  console.log(data.value)
+})
 </script>
 
 <template>
@@ -143,51 +148,62 @@ const responsiveOptions = ref([
         <Button class="mt-2" size="large">立即購買</Button>
       </div>
     </div>
-    <section class="space-y-8">
-      <h2 class="text-center text-5xl font-bold">電競周邊</h2>
+    <section class="container space-y-8">
+      <h2 class="flex items-center justify-center gap-2 text-center text-5xl font-bold">
+        熱銷商品
+        <LoaderCircle class="animate-spin" v-if="isFetching" />
+      </h2>
       <div v-if="isError">error</div>
-      <div v-else-if="isLoading">Loading</div>
-      <div v-else-if="data?.products">
+      <div v-else>
         <ul class="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
-          <li v-for="product in data.products" :key="product._id">
-            <div class="aspect-[3/2] overflow-hidden rounded">
-              <img :src="product.mainImage.url" class="aspect-[3/2] object-cover" />
-            </div>
-            <div>{{ product.name }}</div>
-          </li>
-        </ul>
-        <Paginator
-          :first="(pagination.page - 1) * pagination.limit"
-          :rows="pagination.limit"
-          :totalRecords="data.totalProducts"
-          :rowsPerPageOptions="[10, 20, 25]"
-          @update:rows="
-            (num) => {
-              pagination.limit = num
-            }
-          "
-          @update:first="
-            (first) => {
-              pagination.page = first / pagination.limit + 1
-            }
-          "
-        />
-      </div>
+          <template v-if="isPending">
+            <li
+              v-for="(_, i) in Array.from({ length: 10 })"
+              :key="i"
+              class="aspect=[3/2] h-52 animate-pulse bg-slate-300 dark:bg-slate-50"
+            />
+          </template>
 
-      <!-- <ul class="grid grid-cols-1 gap-2 sm:grid-cols-2 xl:grid-cols-4">
-        <li v-for="item in accessories" :key="item.title" class="group relative overflow-hidden">
-          <img
-            :src="item.image"
-            :alt="item.title"
-            class="aspect-video transition-all duration-500 ease-in-out group-hover:scale-[103%]"
-          />
-          <div
-            class="absolute left-0 top-0 z-10 hidden h-full w-full place-items-center bg-gray-900/50 text-center text-4xl font-bold text-white group-hover:grid md:text-3xl"
-          >
-            {{ item.title }}
-          </div>
-        </li>
-      </ul> -->
+          <template v-if="data?.products">
+            <li v-for="product in data.products" :key="product._id" class="flex flex-col gap-1">
+              <RouterLink :to="`/products/${product._id}`">
+                <Card
+                  class="h-full shadow-white transition-all duration-500 hover:shadow-lg dark:shadow-gray-700"
+                >
+                  <template #header>
+                    <div class="aspect-[3/2] overflow-hidden rounded">
+                      <img :src="product.mainImage.url" class="aspect-[3/2] object-cover" />
+                    </div>
+                  </template>
+                  <template #title>
+                    <AppHeader level="h4">{{ product.name }}</AppHeader>
+                  </template>
+                  <template #content>
+                    <p>{{ product.description }}</p>
+                  </template>
+                </Card>
+              </RouterLink>
+            </li>
+            <Paginator
+              class="col-span-full"
+              :first="(pagination.page - 1) * pagination.limit"
+              :rows="pagination.limit"
+              :totalRecords="data.totalProducts"
+              :rowsPerPageOptions="[10, 20, 25]"
+              @update:rows="
+                (num) => {
+                  pagination.limit = num
+                }
+              "
+              @update:first="
+                (first) => {
+                  pagination.page = first / pagination.limit + 1
+                }
+              "
+            />
+          </template>
+        </ul>
+      </div>
     </section>
   </main>
 </template>

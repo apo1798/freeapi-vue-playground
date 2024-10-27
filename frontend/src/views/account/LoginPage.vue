@@ -44,13 +44,20 @@ const onSubmit = handleSubmit((values) => {
     <form @submit="onSubmit" class="mx-auto mb-20 mt-10 max-w-sm space-y-8">
       <h1 class="text-center text-3xl font-bold">登入 Fat4Fun 帳號</h1>
       <div class="flex flex-col gap-4">
-        <FormInput id="username" label="使用者名稱" v-model="username" :error="errors.username" />
+        <FormInput
+          id="username"
+          label="使用者名稱"
+          v-model="username"
+          :error="errors.username"
+          :inputProps="{ autocomplete: 'username' }"
+        />
         <FormInput
           id="password"
           label="密碼"
           v-model="password"
           :error="errors.password"
           type="password"
+          :inputProps="{ autocomplete: 'current-password' }"
         />
       </div>
       <div>
