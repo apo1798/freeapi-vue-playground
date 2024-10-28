@@ -1,3 +1,31 @@
+@import './toast.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+/* @layer tailwind-base, primevue, tailwind-utilities;
+
+@layer tailwind-base {
+  @tailwind base;
+}
+
+@layer tailwind-utilities {
+  @tailwind components;
+  @tailwind utilities;
+} */
+
+html {
+  font-size: 87.5% !important;
+  font-family:
+    'Inter var',
+    -apple-system,
+    'system-ui',
+    'Segoe UI',
+    Roboto,
+    Helvetica,
+    Arial,
+    sans-serif,
+    'Apple Color Emoji',
+    'Segoe UI Emoji',
+    'Segoe UI Symbol';
+}
